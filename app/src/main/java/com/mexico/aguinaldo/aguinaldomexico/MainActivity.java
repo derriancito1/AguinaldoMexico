@@ -1,8 +1,10 @@
 package com.mexico.aguinaldo.aguinaldomexico;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
@@ -33,13 +35,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView fechaInicio;
     private EditText editTextFechaInicio, editTextSueldo,editTextAguinaldo,editTextFechaFin;
     private TextView textView;
-    private int day, month, year, dias;
+    private int day, month, year, dias, contador;
     private int sueldo,aguinaldo;
     private Date fechaInicial, fechaFinal;
     private double aguinaldoAnual, aguinaldoProporcional;
     private AdView mAdView;
     private String regexp;
     private AlertDialog alert;
+    private SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +81,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         year=c.get(Calendar.YEAR);
 
         editTextFechaFin.setText(year+"/12/31");
+
+        prefs = getSharedPreferences("PreferencesAhorro", Context.MODE_PRIVATE);
+
+
 
 
 
@@ -156,29 +163,54 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     public void valorame(){
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setMessage("¿Valora nuestra App? Tu opinión nos importa: ¡Dinos lo que piensas!")
-                        .setCancelable(false)
-                        .setPositiveButton("Ok, ir a Google Play", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.mexico.aguinaldo.aguinaldomexico") ) );
-                            }
-                        })
-                        .setNegativeButton("Ahora no", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
-                alert = builder.create();
-                alert.show();
-            }
-        },3000);
+        boolean calificado = getCalificadoPrefs();
+        contador=1+getContadorPrefs();
+
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("contador", contador);
+        editor.apply();
+
+        if (!calificado && contador>=3){
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setMessage("¿Valora nuestra App? Tu opinión nos importa: ¡Dinos lo que piensas!")
+                            .setCancelable(false)
+                            .setPositiveButton("Ok, ir a Google Play", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.mexico.aguinaldo.aguinaldomexico")));
 
 
+                                    SharedPreferences.Editor editor = prefs.edit();
+                                    editor.putBoolean("calificado", true);
+                                    editor.apply();
+                                }
+                            })
+                            .setNegativeButton("Ahora no", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                    alert = builder.create();
+                    alert.show();
+                }
+            },3000);
+
+        }
+
+
+
+
+    }
+
+    private boolean getCalificadoPrefs(){
+        return prefs.getBoolean("calificado", false);
+    }
+
+    private int getContadorPrefs(){
+        return prefs.getInt("contador", 0);
     }
 
 
