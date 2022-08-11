@@ -10,8 +10,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -21,27 +19,27 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private Button fechaInicio, calcular;
-    private EditText editTextFechaInicio, editTextSueldo,editTextAguinaldo;
+    private EditText editTextFechaInicio, editTextSueldo,editTextAguinaldo,editTextFechaFin;
     private TextView textView;
     private int day, month, year, dias;
     private int sueldo,aguinaldo;
     private Date fechaInicial, fechaFinal;
     private double aguinaldoAnual, aguinaldoProporcional;
     private AdView mAdView;
-
-
+    private String regexp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        MobileAds.initialize(this, "ca-app-pub-9001957420901694~2109582463");
+        MobileAds.initialize(this, "ca-app-pub-9001957420901694~9538615966");
 
-
+        /*MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");*/ // PRUEBAS
 
 
         mAdView = findViewById(R.id.adView);
@@ -51,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fechaInicio=(Button)findViewById(R.id.fechaInicio);
         calcular=(Button)findViewById(R.id.calcular);
         editTextFechaInicio=(EditText)findViewById(R.id.editTextFechaInicio);
+        editTextFechaFin=(EditText)findViewById(R.id.editTextFechaFin);
         editTextSueldo=(EditText)findViewById(R.id.editTextSueldo);
         editTextAguinaldo=(EditText) findViewById(R.id.editTextAguinaldo);
 
@@ -63,40 +62,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fechaInicial=null;
 
 
-        mAdView.setAdListener(new AdListener() {
-            @Override
-            public void onAdLoaded() {
-                // Code to be executed when an ad finishes loading.
-            }
+        regexp = "\\d{4}/\\d{1,2}/\\d{1,2}";
 
-            @Override
-            public void onAdFailedToLoad(int errorCode) {
-                // Code to be executed when an ad request fails.
-            }
 
-            @Override
-            public void onAdOpened() {
-                // Code to be executed when an ad opens an overlay that
-                // covers the screen.
-            }
+        final Calendar c= Calendar.getInstance();
+        year=c.get(Calendar.YEAR);
 
-            @Override
-            public void onAdLeftApplication() {
-                // Code to be executed when the user has left the app.
-            }
-
-            @Override
-            public void onAdClosed() {
-                // Code to be executed when when the user is about to return
-                // to the app after tapping on an ad.
-            }
-        });
+        editTextFechaFin.setText(year+"/12/31");
 
 
 
     }
-
-
 
     @Override
     public void onClick(View view) {
@@ -117,14 +93,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     editTextFechaInicio.setText(i+"/"+monthCalculo+"/"+dayCalculo);
                     fechaInicial = new Date((i-1900),i1,i2);
-                    fechaFinal = new Date(String.valueOf(Calendar.getInstance().getTime()));
+                    /*fechaFinal = new Date(String.valueOf(Calendar.getInstance().getTime()));*/
+                    fechaFinal = new Date(editTextFechaFin.getText().toString());
                 }
             }, day, month, year);
             datePickerDialog.show();
         }else if (view==calcular){
-            if (fechaInicial==null || fechaFinal==null){
-                Toast.makeText(MainActivity.this,"Favor de seleccionar fecha", Toast.LENGTH_LONG).show();
-            }else if ( fechaFinal.before(fechaInicial)){
+
+            /*if (fechaInicial==null || fechaFinal==null){*/
+            if (!Pattern.matches(regexp, editTextFechaInicio.getText().toString())){
+                Toast.makeText(MainActivity.this,"Favor de seleccionar fecha valida en formato AAAA/MM/DD", Toast.LENGTH_LONG).show();
+                return;
+            }else{
+                fechaInicial = new Date(editTextFechaInicio.getText().toString());
+                fechaFinal = new Date(editTextFechaFin.getText().toString());
+            }
+
+            if ( fechaFinal.before(fechaInicial)){
                 Toast.makeText(MainActivity.this,"Ingresar una fecha menor a la de hoy", Toast.LENGTH_LONG).show();
             }else if (editTextSueldo.getEditableText().toString().isEmpty()){
                 Toast.makeText(MainActivity.this,"Favor de llenar el campo de sueldo", Toast.LENGTH_LONG).show();
