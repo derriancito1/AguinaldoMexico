@@ -102,7 +102,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             /*if (fechaInicial==null || fechaFinal==null){*/
             if (!Pattern.matches(regexp, editTextFechaInicio.getText().toString())){
-                Toast.makeText(MainActivity.this,"Favor de seleccionar fecha valida en formato AAAA/MM/DD", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this,"Favor de seleccionar fecha de inicio valida en formato AAAA/MM/DD", Toast.LENGTH_LONG).show();
+                return;
+            }else if (!Pattern.matches(regexp, editTextFechaFin.getText().toString())){
+                Toast.makeText(MainActivity.this,"Favor de seleccionar fecha de fin valida en formato AAAA/MM/DD", Toast.LENGTH_LONG).show();
                 return;
             }else{
                 fechaInicial = new Date(editTextFechaInicio.getText().toString());
