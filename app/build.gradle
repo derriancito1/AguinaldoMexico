@@ -6,8 +6,8 @@ android {
         applicationId "com.mexico.aguinaldo.aguinaldomexico"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 8
-        versionName "2.0.5"
+        versionCode 9
+        versionName "2.0.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
