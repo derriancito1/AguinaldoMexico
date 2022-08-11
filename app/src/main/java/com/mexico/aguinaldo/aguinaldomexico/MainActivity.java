@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -155,27 +156,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     public void valorame(){
-        try {
-            Thread.sleep(5000);
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("¿Valora nuestra App? Tu opinión nos importa: ¡Dinos lo que piensas!")
-                    .setCancelable(false)
-                    .setPositiveButton("Ok, ir a Google Play", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.mexico.aguinaldo.aguinaldomexico") ) );
-                        }
-                    })
-                    .setNegativeButton("Ahora no", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                        }
-                    });
-            alert = builder.create();
-            alert.show();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setMessage("¿Valora nuestra App? Tu opinión nos importa: ¡Dinos lo que piensas!")
+                        .setCancelable(false)
+                        .setPositiveButton("Ok, ir a Google Play", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.mexico.aguinaldo.aguinaldomexico") ) );
+                            }
+                        })
+                        .setNegativeButton("Ahora no", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                alert = builder.create();
+                alert.show();
+            }
+        },3000);
+
 
     }
 
