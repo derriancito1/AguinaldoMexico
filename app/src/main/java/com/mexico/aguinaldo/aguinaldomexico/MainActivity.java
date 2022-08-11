@@ -1,12 +1,18 @@
 package com.mexico.aguinaldo.aguinaldomexico;
 
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,7 +28,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private Button fechaInicio, calcular;
+    private Button calcular;
+    private ImageView fechaInicio;
     private EditText editTextFechaInicio, editTextSueldo,editTextAguinaldo,editTextFechaFin;
     private TextView textView;
     private int day, month, year, dias;
@@ -31,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private double aguinaldoAnual, aguinaldoProporcional;
     private AdView mAdView;
     private String regexp;
+    private AlertDialog alert;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
 
-        fechaInicio=(Button)findViewById(R.id.fechaInicio);
+        fechaInicio=(ImageView) findViewById(R.id.imageView);
         calcular=(Button)findViewById(R.id.calcular);
         editTextFechaInicio=(EditText)findViewById(R.id.editTextFechaInicio);
         editTextFechaFin=(EditText)findViewById(R.id.editTextFechaFin);
@@ -135,12 +143,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
          if (dias >=365 ){
             aguinaldoAnual = ((sueldo/30)*(aguinaldo));
             textView.setText("Te corresponden $"+formato.format(aguinaldoAnual)+" de Aguinaldo por 365 dias de trabajo");
+            valorame();
 
          }else{
             aguinaldoAnual = ((sueldo/30)*(aguinaldo));
             aguinaldoProporcional =((aguinaldoAnual/365)*dias);
             textView.setText("Te corresponden $"+formato.format(aguinaldoProporcional)+" de Aguinaldo por "+dias+" días de trabajo");
+            valorame();
         }
+    }
+
+
+    public void valorame(){
+        try {
+            Thread.sleep(5000);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("¿Valora nuestra App? Tu opinión nos importa: ¡Dinos lo que piensas!")
+                    .setCancelable(false)
+                    .setPositiveButton("Ok, ir a Google Play", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.mexico.aguinaldo.aguinaldomexico") ) );
+                        }
+                    })
+                    .setNegativeButton("Ahora no", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            alert = builder.create();
+            alert.show();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 
 
