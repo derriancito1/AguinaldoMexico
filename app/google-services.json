@@ -3,7 +3,7 @@
     "project_number": "682728178587",
     "firebase_url": "https://aguinaldo-mexico.firebaseio.com",
     "project_id": "aguinaldo-mexico",
-    "storage_bucket": "aguinaldo-mexico.appspot.com"
+    "storage_bucket": "aguinaldo-mexico.firebasestorage.app"
   },
   "client": [
     {
@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "682728178587-e29i0tlemfu68p0ee8hf8v6l4qjbfr3p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mexico.aguinaldo.aguinaldomexico",
+            "certificate_hash": "bf80a54b21ecd55711074c84cc475ac3575a8d52"
+          }
+        },
+        {
           "client_id": "682728178587-m91ahrt2urtrkqk1rtkujfkl5o2c49a5.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -25,18 +33,15 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
+          "other_platform_oauth_client": [
+            {
+              "client_id": "682728178587-m91ahrt2urtrkqk1rtkujfkl5o2c49a5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
-      },
-      "admob_app_id": "ca-app-pub-9001957420901694~9538615966"
+      }
     }
   ],
   "configuration_version": "1"

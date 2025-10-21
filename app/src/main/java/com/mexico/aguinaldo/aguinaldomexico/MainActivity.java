@@ -1,220 +1,317 @@
 package com.mexico.aguinaldo.aguinaldomexico;
 
 import android.app.DatePickerDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
-import android.os.Handler;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
+import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
+import com.google.firebase.FirebaseApp;
+import com.jakewharton.threetenabp.AndroidThreeTen;
+
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.format.DateTimeFormatter;
+import org.threeten.bp.temporal.ChronoUnit;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
+import androidx.appcompat.app.AlertDialog;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.android.gms.ads.MobileAds;
 
-import java.text.DecimalFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.AdRequest;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private Button calcular;
-    private ImageView fechaInicio;
-    private EditText editTextFechaInicio, editTextSueldo,editTextAguinaldo,editTextFechaFin;
-    private TextView textView;
-    private int day, month, year, dias, contador;
-    private int sueldo,aguinaldo;
-    private Date fechaInicial, fechaFinal;
-    private double aguinaldoAnual, aguinaldoProporcional;
-    private AdView mAdView;
-    private String regexp;
-    private AlertDialog alert;
-    private SharedPreferences prefs;
+import android.os.Build;
+
+import android.view.WindowInsets;
+
+import android.graphics.Insets;
+import android.graphics.Color;
+
+import android.view.Window;
+
+
+
+
+
+
+
+
+
+public class MainActivity extends AppCompatActivity {
+
+    EditText etSalarioMensual, etDiasAguinaldo, etFechaIngreso, etFechaSalida;
+    Button btnCalcular;
+    TextView tvResultados;
+    Calendar fechaIngresoCalendar;
+    Calendar fechaSalidaCalendar;
+
+    ISRManager isrManager;
+    AdView adView;
+
+    private static final String PREFS_NAME = "AppPrefs";
+    private static final String KEY_LAST_REVIEW = "lastReviewTime";
+    private static final long REVIEW_INTERVAL = 7 * 24 * 60 * 60 * 1000L; // 7 días
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        MobileAds.initialize(this, "ca-app-pub-9001957420901694~9538615966");
+        try {
 
-        /*MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");*/ // PRUEBAS
-
-
-        mAdView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
-
-        fechaInicio=(ImageView) findViewById(R.id.imageView);
-        calcular=(Button)findViewById(R.id.calcular);
-        editTextFechaInicio=(EditText)findViewById(R.id.editTextFechaInicio);
-        editTextFechaFin=(EditText)findViewById(R.id.editTextFechaFin);
-        editTextSueldo=(EditText)findViewById(R.id.editTextSueldo);
-        editTextAguinaldo=(EditText) findViewById(R.id.editTextAguinaldo);
-
-        textView=(TextView) findViewById(R.id.textView);
-
-        fechaInicio.setOnClickListener(this);
-        calcular.setOnClickListener(this);
-
-        fechaFinal=null;
-        fechaInicial=null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                Window window = getWindow();
+                window.setStatusBarColor(Color.BLACK); // Cambia el fondo de la barra de estado a negro
+            }
 
 
-        regexp = "\\d{4}/\\d{1,2}/\\d{1,2}";
+            // Aquí insertas el bloque para manejar el padding inferior
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                getWindow().setDecorFitsSystemWindows(false);
+                findViewById(R.id.main_layout).setOnApplyWindowInsetsListener((v, insets) -> {
+                    Insets systemBars = insets.getInsets(WindowInsets.Type.systemBars());
+                    v.setPadding(0, systemBars.top, 0, systemBars.bottom); // Aplica padding superior e inferior
+                    return insets;
+                });
+            }
 
 
-        final Calendar c= Calendar.getInstance();
-        year=c.get(Calendar.YEAR);
+            // Inicializa AdMob
+            MobileAds.initialize(this, initializationStatus -> {});
 
-        editTextFechaFin.setText(year+"/12/31");
+            adView = findViewById(R.id.adView);
+            AdRequest adRequest = new AdRequest.Builder().build();
+            adView.loadAd(adRequest);
 
-        prefs = getSharedPreferences("PreferencesAhorro", Context.MODE_PRIVATE);
+            // Fin AdMob
 
 
 
+            AndroidThreeTen.init(this);
+            FirebaseApp.initializeApp(this);
+
+            isrManager = new ISRManager(this);
+
+            etSalarioMensual = findViewById(R.id.etSalarioMensual);
+            etDiasAguinaldo = findViewById(R.id.etDiasAguinaldo);
+            etFechaIngreso = findViewById(R.id.etFechaIngreso);
+            etFechaSalida = findViewById(R.id.etFechaSalida);
+            btnCalcular = findViewById(R.id.btnCalcular);
+            tvResultados = findViewById(R.id.tvResultados);
+
+            ImageButton btnAyudaSalario = findViewById(R.id.btnAyudaSalario);
+            btnAyudaSalario.setOnClickListener(v -> {
+                try {
+                    new AlertDialog.Builder(this)
+                            .setTitle("Salario mensual")
+                            .setMessage("Ingresa tu salario mensual bruto, es decir, el total que percibes antes de cualquier deducción o impuesto. " +
+                                    "Normalmente puedes encontrar este dato en tu recibo de nómina o contrato laboral.")
+                            .setPositiveButton("OK", null)
+                            .show();
+                } catch (Exception e) {
+                    FirebaseCrashlytics.getInstance().recordException(e);
+                }
+            });
+
+            ImageButton btnAyudaDiasAguinaldo = findViewById(R.id.btnAyudaDiasAguinaldo);
+            btnAyudaDiasAguinaldo.setOnClickListener(v -> {
+                try {
+                    new AlertDialog.Builder(this)
+                            .setTitle("Días de aguinaldo")
+                            .setMessage("Este campo representa la cantidad de días de aguinaldo que tu empresa otorga en el año. " +
+                                    "Por ley en México, el mínimo es 15 días, pero algunas empresas pueden dar más. " +
+                                    "Puedes consultar esta información en tu contrato o con recursos humanos.")
+                            .setPositiveButton("OK", null)
+                            .show();
+                } catch (Exception e) {
+                    FirebaseCrashlytics.getInstance().recordException(e);
+                }
+            });
+
+            fechaIngresoCalendar = Calendar.getInstance();
+            fechaSalidaCalendar = Calendar.getInstance();
+
+            int year = Calendar.getInstance().get(Calendar.YEAR);
+            fechaSalidaCalendar.set(year, Calendar.DECEMBER, 31);
+            actualizarFechaSalidaEditText();
+
+            etFechaIngreso.setOnClickListener(view -> {
+                try {
+                    mostrarDatePicker(fechaIngresoCalendar, etFechaIngreso);
+                } catch (Exception e) {
+                    FirebaseCrashlytics.getInstance().recordException(e);
+                }
+            });
+
+            etFechaSalida.setOnClickListener(view -> {
+                try {
+                    mostrarDatePicker(fechaSalidaCalendar, etFechaSalida);
+                } catch (Exception e) {
+                    FirebaseCrashlytics.getInstance().recordException(e);
+                }
+            });
+
+            btnCalcular.setOnClickListener(view -> {
+                try {
+                    calcularAguinaldo();
+                } catch (Exception e) {
+                    FirebaseCrashlytics.getInstance().recordException(e);
+                }
+            });
+
+        } catch (Exception e) {
+            FirebaseCrashlytics.getInstance().recordException(e);
+        }
+    }
 
 
+    @Override
+    protected void onPause() {
+        if (adView != null) adView.pause();
+        super.onPause();
     }
 
     @Override
-    public void onClick(View view) {
-        if (view==fechaInicio){
-            final Calendar c= Calendar.getInstance();
-            day=c.get(Calendar.DAY_OF_MONTH);
-            month=c.get(Calendar.MONTH);
-            year=c.get(Calendar.YEAR);
+    protected void onResume() {
+        super.onResume();
+        if (adView != null) adView.resume();
+    }
 
-            DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-                @Override
-                public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-                    String monthCalculo="";
-                    String dayCalculo="";
+    @Override
+    protected void onDestroy() {
+        if (adView != null) adView.destroy();
+        super.onDestroy();
+    }
+    private void mostrarDatePicker(Calendar calendar, EditText etFecha) {
+        try {
+            int año = calendar.get(Calendar.YEAR);
+            int mes = calendar.get(Calendar.MONTH);
+            int dia = calendar.get(Calendar.DAY_OF_MONTH);
 
-                    monthCalculo = (i1+1)>=10 ? ""+(i1+1) : "0"+(i1+1);
-                    dayCalculo = i2>=10 ? ""+i2 : "0"+i2;
-
-                    editTextFechaInicio.setText(i+"/"+monthCalculo+"/"+dayCalculo);
-                    fechaInicial = new Date((i-1900),i1,i2);
-                    /*fechaFinal = new Date(String.valueOf(Calendar.getInstance().getTime()));*/
-                    fechaFinal = new Date(editTextFechaFin.getText().toString());
-                }
-            }, day, month, year);
+            DatePickerDialog datePickerDialog = new DatePickerDialog(
+                    this,
+                    (view, añoSel, mesSel, diaSel) -> {
+                        calendar.set(añoSel, mesSel, diaSel);
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                        etFecha.setText(sdf.format(calendar.getTime()));
+                    },
+                    año, mes, dia);
             datePickerDialog.show();
-        }else if (view==calcular){
+        } catch (Exception e) {
+            FirebaseCrashlytics.getInstance().recordException(e);
+        }
+    }
 
-            /*if (fechaInicial==null || fechaFinal==null){*/
-            if (!Pattern.matches(regexp, editTextFechaInicio.getText().toString())){
-                Toast.makeText(MainActivity.this,"Favor de seleccionar fecha de inicio valida en formato AAAA/MM/DD", Toast.LENGTH_LONG).show();
-                return;
-            }else if (!Pattern.matches(regexp, editTextFechaFin.getText().toString())){
-                Toast.makeText(MainActivity.this,"Favor de seleccionar fecha de fin valida en formato AAAA/MM/DD", Toast.LENGTH_LONG).show();
-                return;
-            }else{
-                fechaInicial = new Date(editTextFechaInicio.getText().toString());
-                fechaFinal = new Date(editTextFechaFin.getText().toString());
-            }
-
-            if ( fechaFinal.before(fechaInicial)){
-                Toast.makeText(MainActivity.this,"Ingresar una fecha menor a la de hoy", Toast.LENGTH_LONG).show();
-            }else if (editTextSueldo.getEditableText().toString().isEmpty()){
-                Toast.makeText(MainActivity.this,"Favor de llenar el campo de sueldo", Toast.LENGTH_LONG).show();
-            }else if (editTextAguinaldo.getEditableText().toString().isEmpty()){
-                Toast.makeText(MainActivity.this,"Favor de llenar el campo de días de aguinaldo", Toast.LENGTH_LONG).show();
-            }else {
-                calcularAguinaldo();
-            }
-
+    private void actualizarFechaSalidaEditText() {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            etFechaSalida.setText(sdf.format(fechaSalidaCalendar.getTime()));
+        } catch (Exception e) {
+            FirebaseCrashlytics.getInstance().recordException(e); // <--- lo registras
         }
     }
 
 
-    public void calcularAguinaldo(){
-         sueldo = Integer.parseInt(editTextSueldo.getEditableText().toString());
-         aguinaldo = Integer.parseInt(editTextAguinaldo.getEditableText().toString());
-         dias=(int) ((fechaFinal.getTime()-fechaInicial.getTime())/86400000);
-         DecimalFormat formato = new DecimalFormat("#.00");
+    private void calcularAguinaldo() {
 
-         if (dias >=365 ){
-            aguinaldoAnual = ((sueldo/30)*(aguinaldo));
-            textView.setText("Te corresponden $"+formato.format(aguinaldoAnual)+" de Aguinaldo por 365 dias de trabajo");
-            valorame();
-
-         }else{
-            aguinaldoAnual = ((sueldo/30)*(aguinaldo));
-            aguinaldoProporcional =((aguinaldoAnual/365)*dias);
-            textView.setText("Te corresponden $"+formato.format(aguinaldoProporcional)+" de Aguinaldo por "+dias+" días de trabajo");
-            valorame();
-        }
-    }
+        try {
 
 
-    public void valorame(){
-        boolean calificado = getCalificadoPrefs();
-        contador=1+getContadorPrefs();
+            double salarioMensual = Double.parseDouble(etSalarioMensual.getText().toString());
+            int diasAguinaldo = Integer.parseInt(etDiasAguinaldo.getText().toString());
+            double UMA_DIARIA = 113.14;
 
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt("contador", contador);
-        editor.apply();
+            String inputFechaIngreso = etFechaIngreso.getText().toString().trim();
+            String inputFechaSalida = etFechaSalida.getText().toString().trim();
 
-        if (!calificado && contador>=3){
-            new Handler().postDelayed(new Runnable() {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.getDefault());
+
+            LocalDate fechaIngreso = LocalDate.parse(inputFechaIngreso, formatter);
+            LocalDate fechaSalida = LocalDate.parse(inputFechaSalida, formatter);
+
+            int anioEnCurso = fechaSalida.getYear();
+
+            LocalDate inicioAnio = LocalDate.of(anioEnCurso, 1, 1);
+            LocalDate finAnio = LocalDate.of(anioEnCurso, 12, 31);
+
+            if (fechaIngreso.isBefore(inicioAnio)) fechaIngreso = inicioAnio;
+            if (fechaSalida.isAfter(finAnio)) fechaSalida = finAnio;
+
+            if (fechaSalida.isBefore(fechaIngreso)) {
+                Toast.makeText(this, "La fecha de salida no puede ser anterior a la de ingreso", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            final long diasTrab = ChronoUnit.DAYS.between(fechaIngreso, fechaSalida.plusDays(1));
+            final double salarioDiario = salarioMensual / 30.0;
+            final double aguinaldoBruto = salarioDiario * diasAguinaldo * ((double) diasTrab / 365.0);
+            final double parteExenta = UMA_DIARIA * 30 * ((double) diasTrab / 365.0);
+
+            double tempParteGravada = aguinaldoBruto - parteExenta;
+            if (tempParteGravada < 0) tempParteGravada = 0;
+            final double parteGravada = tempParteGravada;
+
+            // Ahora sí usamos variables finales dentro del callback
+            isrManager.getTablaISRActual(new ISRManager.ISRCallback() {
                 @Override
-                public void run() {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setMessage("¿Valora nuestra App? Tu opinión nos importa: ¡Dinos lo que piensas!")
-                            .setCancelable(false)
-                            .setPositiveButton("Ok, ir a Google Play", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.mexico.aguinaldo.aguinaldomexico")));
+                public void onTablaObtenida(List<TablaISR> tablaISR) {
+                    double isrSalarioMensual = calcularISR(tablaISR, salarioMensual);
+                    double isrIngresoTotal = calcularISR(tablaISR, salarioMensual + parteGravada);
+                    double isrAguinaldo = isrIngresoTotal - isrSalarioMensual;
+                    if (isrAguinaldo < 0) isrAguinaldo = 0;
+
+                    double aguinaldoNeto = aguinaldoBruto - isrAguinaldo;
+
+                    String resultado =
+                            "📅 Días trabajados: " + diasTrab + " días\n\n" +
+                                    "💰 Aguinaldo bruto: $" + String.format(Locale.US, "%.2f", aguinaldoBruto) + "\n" +
+                                    "🟩 Parte exenta (30 UMA): $" + String.format(Locale.US, "%.2f", parteExenta) + "\n" +
+                                    "🟥 Parte gravada: $" + String.format(Locale.US, "%.2f", parteGravada) + "\n" +
+                                    "💸 ISR retenido: $" + String.format(Locale.US, "%.2f", isrAguinaldo) + "\n\n" +
+                                    "✅ Aguinaldo neto a recibir: $" + String.format(Locale.US, "%.2f", aguinaldoNeto);
 
 
-                                    SharedPreferences.Editor editor = prefs.edit();
-                                    editor.putBoolean("calificado", true);
-                                    editor.apply();
-                                }
-                            })
-                            .setNegativeButton("Ahora no", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            });
-                    alert = builder.create();
-                    alert.show();
+                    runOnUiThread(() -> {
+                        tvResultados.setText(resultado);
+                        //diasTrabajados.setText("Días trabajados: " + diasTrab);
+                    });
                 }
-            },3000);
 
+
+
+                @Override
+                public void onError(String error) {
+                    runOnUiThread(() -> Toast.makeText(MainActivity.this, "Error al cargar tabla ISR: " + error, Toast.LENGTH_LONG).show());
+                }
+            });
+
+        } catch (Exception e) {
+            FirebaseCrashlytics.getInstance().recordException(e);  // Reporta a Firebase
+            Toast.makeText(this, "Completa todos los campos correctamente", Toast.LENGTH_SHORT).show();
         }
-
-
-
-
     }
 
-    private boolean getCalificadoPrefs(){
-        return prefs.getBoolean("calificado", false);
+
+    private double calcularISR(List<TablaISR> tablaISR, double ingreso) {
+        try {
+            if (tablaISR == null || tablaISR.isEmpty()) return 0;
+            for (TablaISR rango : tablaISR) {
+                if (ingreso >= rango.getMin() && ingreso <= rango.getMax()) {
+                    return (ingreso - rango.getMin()) * rango.getTasa() + rango.getCuotaFija();
+                }
+            }
+        } catch (Exception e) {
+            FirebaseCrashlytics.getInstance().recordException(e); // <--- lo registras
+        }
+        return 0;
     }
 
-    private int getContadorPrefs(){
-        return prefs.getInt("contador", 0);
-    }
+    
+
 
 
 
 }
-
-
