@@ -19,6 +19,14 @@
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-9001957420901694~9538615966"/>
+        <activity android:name="com.mexico.aguinaldo.aguinaldomexico.ComoCalcularActivity" android:exported="false" />
+        <activity android:name="com.mexico.aguinaldo.aguinaldomexico.DerechosLaboralesActivity" android:exported="false" />
+        <activity android:name="com.mexico.aguinaldo.aguinaldomexico.IsrUmaActivity" android:exported="false" />
+        <activity android:name="com.mexico.aguinaldo.aguinaldomexico.ValoresFiscalesActivity" android:exported="false" />
+        <activity android:name="com.mexico.aguinaldo.aguinaldomexico.FuentesOficialesActivity" android:exported="false" />
+        <activity
+            android:name="com.mexico.aguinaldo.aguinaldomexico.InformacionAguinaldoActivity"
+            android:exported="false" />
         <activity
             android:name="com.mexico.aguinaldo.aguinaldomexico.MainActivity"
             android:exported="true"

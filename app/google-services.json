@@ -8,6 +8,35 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:682728178587:android:3e3fe7992d4ce779bf973e",
+        "android_client_info": {
+          "package_name": "com.diversitisystems.aguinaldomexico"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "682728178587-m91ahrt2urtrkqk1rtkujfkl5o2c49a5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzqVnHq9SKwq3gwKguPSwsgsU7xu8Gg0w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "682728178587-m91ahrt2urtrkqk1rtkujfkl5o2c49a5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:682728178587:android:819896d1e5195bd1",
         "android_client_info": {
           "package_name": "com.mexico.aguinaldo.aguinaldomexico"

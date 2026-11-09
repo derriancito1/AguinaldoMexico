@@ -1,21 +1,13 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Aguinaldo México - reglas R8 para compilaciones release
+# Mantener símbolos y líneas para reportes de errores en Firebase Crashlytics.
+-keepattributes SourceFile,LineNumberTable,Signature,InnerClasses,EnclosingMethod,*Annotation*
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# ISRManager serializa estos modelos con Gson y los lee desde Firebase.
+# Los nombres de sus campos son parte del formato JSON y NO deben renombrarse.
+# Son solo dos modelos pequeños; el resto de la app queda disponible para R8.
+-keep class com.mexico.aguinaldo.aguinaldomexico.TablaISR { *; }
+-keep class com.mexico.aguinaldo.aguinaldomexico.DatosFiscales { *; }
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
-
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# ISRManager usa TypeToken<List<TablaISR>> y R8 debe conservar esa firma genérica.
+-keep,allowobfuscation,allowshrinking,allowoptimization class com.google.gson.reflect.TypeToken { *; }
+-keep,allowobfuscation,allowshrinking,allowoptimization class * extends com.google.gson.reflect.TypeToken

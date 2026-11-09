@@ -1,0 +1,158 @@
+{
+  "2025": [
+    {
+      "cuotaFija": 0,
+      "max": 746.04,
+      "min": 0.01,
+      "tasa": 0.0192
+    },
+    {
+      "cuotaFija": 14.32,
+      "max": 6332.05,
+      "min": 746.05,
+      "tasa": 0.064
+    },
+    {
+      "cuotaFija": 371.83,
+      "max": 11128.01,
+      "min": 6332.06,
+      "tasa": 0.1088
+    },
+    {
+      "cuotaFija": 893.63,
+      "max": 12935.82,
+      "min": 11128.02,
+      "tasa": 0.16
+    },
+    {
+      "cuotaFija": 1182.88,
+      "max": 15487.71,
+      "min": 12935.83,
+      "tasa": 0.1792
+    },
+    {
+      "cuotaFija": 1640.18,
+      "max": 31236.49,
+      "min": 15487.72,
+      "tasa": 0.2136
+    },
+    {
+      "cuotaFija": 5004.12,
+      "max": 49233,
+      "min": 31236.5,
+      "tasa": 0.2352
+    },
+    {
+      "cuotaFija": 9236.89,
+      "max": 93993.9,
+      "min": 49233.01,
+      "tasa": 0.3
+    },
+    {
+      "cuotaFija": 22665.17,
+      "max": 125325.2,
+      "min": 93993.91,
+      "tasa": 0.32
+    },
+    {
+      "cuotaFija": 32691.18,
+      "max": 375975.61,
+      "min": 125325.21,
+      "tasa": 0.34
+    },
+    {
+      "cuotaFija": 117912.32,
+      "max": 9999999999,
+      "min": 375975.62,
+      "tasa": 0.35
+    }
+  ],
+  "2026": [
+    {
+      "cuotaFija": 0.0,
+      "max": 844.59,
+      "min": 0.01,
+      "tasa": 0.0192
+    },
+    {
+      "cuotaFija": 16.22,
+      "max": 7168.51,
+      "min": 844.6,
+      "tasa": 0.064
+    },
+    {
+      "cuotaFija": 420.95,
+      "max": 12598.02,
+      "min": 7168.52,
+      "tasa": 0.1088
+    },
+    {
+      "cuotaFija": 1011.68,
+      "max": 14644.64,
+      "min": 12598.03,
+      "tasa": 0.16
+    },
+    {
+      "cuotaFija": 1339.14,
+      "max": 17533.64,
+      "min": 14644.65,
+      "tasa": 0.1792
+    },
+    {
+      "cuotaFija": 1856.84,
+      "max": 35362.83,
+      "min": 17533.65,
+      "tasa": 0.2136
+    },
+    {
+      "cuotaFija": 5665.16,
+      "max": 55736.68,
+      "min": 35362.84,
+      "tasa": 0.2352
+    },
+    {
+      "cuotaFija": 10457.09,
+      "max": 106410.5,
+      "min": 55736.69,
+      "tasa": 0.3
+    },
+    {
+      "cuotaFija": 25659.23,
+      "max": 141880.66,
+      "min": 106410.51,
+      "tasa": 0.32
+    },
+    {
+      "cuotaFija": 37009.69,
+      "max": 425641.99,
+      "min": 141880.67,
+      "tasa": 0.34
+    },
+    {
+      "cuotaFija": 133488.54,
+      "max": 9999999999,
+      "min": 425642.0,
+      "tasa": 0.35
+    }
+  ],
+  "parametrosFiscales": {
+    "2025": {
+      "umaDiaria": 113.14,
+      "vigenteDesde": "2025-02-01",
+      "umaEneroDiaria": 108.57,
+      "salarioMinimoGeneralDiario": 278.8,
+      "salarioMinimoGeneralMensual": 8480.17,
+      "salarioMinimoFronteraNorteDiario": 419.88,
+      "salarioMinimoFronteraNorteMensual": 12771.35
+    },
+    "2026": {
+      "umaDiaria": 117.31,
+      "vigenteDesde": "2026-02-01",
+      "umaEneroDiaria": 113.14,
+      "salarioMinimoGeneralDiario": 315.04,
+      "salarioMinimoGeneralMensual": 9582.47,
+      "salarioMinimoFronteraNorteDiario": 440.87,
+      "salarioMinimoFronteraNorteMensual": 13409.8
+    }
+  }
+}

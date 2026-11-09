@@ -9,18 +9,19 @@ android {
     compileSdk 36
 
     defaultConfig {
-        applicationId "com.mexico.aguinaldo.aguinaldomexico"
-        minSdk 23
+        applicationId "com.diversitisystems.aguinaldomexico"
+        minSdk 24
         targetSdk 36
-        versionCode 13
-        versionName "3.0.1"
+        versionCode 18
+        versionName "3.2.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -34,6 +35,8 @@ dependencies {
 
     implementation libs.appcompat
     implementation libs.material
+    implementation "androidx.drawerlayout:drawerlayout:1.2.0"
+    implementation "com.google.android.play:review:2.0.2"
     implementation libs.activity
     implementation libs.constraintlayout
     testImplementation libs.junit

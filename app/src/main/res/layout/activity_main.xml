@@ -1,20 +1,27 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ads="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F0F8FF">
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F0F8FF"
     tools:context=".MainActivity">
 
-    <!-- Scrollable content -->
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:padding="16dp"
+        android:padding="12dp"
         android:clipToPadding="false"
+        android:fillViewport="false"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/adView"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,176 +33,293 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Título -->
-            <TextView
-                android:id="@+id/textTitulo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Calculadora de Aguinaldo México"
-                android:textSize="24sp"
-                android:textColor="#2E7D32"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:paddingBottom="24dp" />
-
-            <!-- Fecha de ingreso -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Fecha de ingreso"
-                android:textSize="16sp"
-                android:textColor="#1B5E20"
-                android:paddingBottom="4dp" />
-
-            <EditText
-                android:id="@+id/etFechaIngreso"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:focusable="false"
-                android:clickable="true"
-                android:hint="Selecciona la fecha"
-                android:inputType="none"
-                android:background="@drawable/edittext_background"
-                android:padding="12dp" />
-
-            <!-- Fecha de salida -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Fecha de salida"
-                android:textSize="16sp"
-                android:textColor="#1B5E20"
-                android:paddingTop="12dp"
-                android:paddingBottom="4dp" />
-
-            <EditText
-                android:id="@+id/etFechaSalida"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:focusable="false"
-                android:clickable="true"
-                android:hint="Selecciona la fecha"
-                android:inputType="none"
-                android:background="@drawable/edittext_background"
-                android:padding="12dp" />
-
-            <!-- Salario mensual con botón ayuda -->
+            <!-- Encabezado: el menú informativo queda siempre accesible -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:paddingTop="16dp"
-                android:paddingBottom="4dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="Salario mensual (MXN)"
-                    android:textSize="16sp"
-                    android:textColor="#1B5E20" />
+                android:paddingBottom="14dp">
 
                 <ImageButton
-                    android:id="@+id/btnAyudaSalario"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:id="@+id/btnAbrirNavegacion"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_menu_hamburguesa"
+                    android:contentDescription="Abrir menú de navegación"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Ayuda salario mensual"
-                    android:src="@android:drawable/ic_menu_help"
-                    ads:tint="#1B5E20"
-                    android:padding="4dp" />
+                    android:tooltipText="Menú"
+                    android:padding="12dp"
+                    app:tint="#2E7D32" />
+
+                <TextView
+                    android:id="@+id/textTitulo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Calculadora de Aguinaldo México"
+                    android:textSize="19sp"
+                    android:textColor="#2E7D32"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:maxLines="2" />
             </LinearLayout>
 
-            <EditText
-                android:id="@+id/etSalarioMensual"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:inputType="numberDecimal"
-                android:hint="Ej. 8480"
-                android:background="@drawable/edittext_background"
-                android:padding="12dp" />
-
-            <!-- Días de aguinaldo con botón ayuda -->
+            <!-- Resumen visible únicamente después de calcular correctamente -->
             <LinearLayout
+                android:id="@+id/summaryContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingTop="16dp"
-                android:paddingBottom="4dp">
+                android:orientation="vertical"
+                android:padding="14dp"
+                android:visibility="gone"
+                android:background="@drawable/resumen_background">
 
                 <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Días de aguinaldo"
+                    android:text="Datos utilizados"
                     android:textSize="16sp"
+                    android:textStyle="bold"
                     android:textColor="#1B5E20" />
 
-                <ImageButton
-                    android:id="@+id/btnAyudaDiasAguinaldo"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Ayuda días de aguinaldo"
-                    android:src="@android:drawable/ic_menu_help"
-                    ads:tint="#1B5E20"
-                    android:padding="4dp" />
+                <TextView
+                    android:id="@+id/tvResumenDatos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:textSize="14sp"
+                    android:textColor="#214630"
+                    android:lineSpacingExtra="3dp" />
+
+                <Button
+                    android:id="@+id/btnEditarDatos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="6dp"
+                    android:text="Editar datos"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="#2E7D32" />
             </LinearLayout>
 
-            <EditText
-                android:id="@+id/etDiasAguinaldo"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:inputType="number"
-                android:hint="Por defecto 15"
-                android:background="@drawable/edittext_background"
-                android:padding="12dp" />
-
-            <!-- Botón calcular -->
-            <Button
-                android:id="@+id/btnCalcular"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="Calcular Aguinaldo"
-                android:textAllCaps="false"
-                android:textSize="18sp"
-                android:backgroundTint="#2E7D32"
-                android:textColor="#FFFFFF"
-                android:layout_marginTop="24dp" />
-
-            <!-- Resultados -->
-            <TextView
-                android:id="@+id/tvResultadoTitulo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Resultados"
-                android:textSize="20sp"
-                android:textColor="#1B5E20"
-                android:textStyle="bold"
-                android:paddingTop="24dp" />
-
-            <TextView
-                android:id="@+id/tvResultados"
+            <!-- Se contrae al completar el cálculo y se expande desde Editar datos -->
+            <LinearLayout
+                android:id="@+id/formContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text=""
-                android:textSize="16sp"
-                android:textColor="#000000"
-                android:paddingTop="16dp" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fecha de ingreso"
+                    android:textSize="16sp"
+                    android:textColor="#1B5E20"
+                    android:paddingBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/etFechaIngreso"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:hint="Selecciona la fecha"
+                    android:inputType="none"
+                    android:drawableEnd="@android:drawable/ic_menu_my_calendar"
+                    android:drawablePadding="8dp"
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fecha de fin y pago del aguinaldo"
+                    android:textSize="16sp"
+                    android:textColor="#1B5E20"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/etFechaSalida"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:hint="Selecciona la fecha"
+                    android:inputType="none"
+                    android:drawableEnd="@android:drawable/ic_menu_my_calendar"
+                    android:drawablePadding="8dp"
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="4dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Salario mensual (MXN)"
+                        android:textSize="16sp"
+                        android:textColor="#1B5E20" />
+
+                    <ImageButton
+                        android:id="@+id/btnAyudaSalario"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Ayuda salario mensual"
+                        android:src="@android:drawable/ic_menu_help"
+                        app:tint="#1B5E20"
+                        android:padding="7dp" />
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/etSalarioMensual"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:inputType="numberDecimal"
+                    android:imeOptions="actionNext"
+                    android:nextFocusDown="@id/etDiasAguinaldo"
+                    android:hint="Escribe tu salario mensual"
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp" />
+
+                <TextView
+                    android:id="@+id/tvSugerenciaSalario"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Consultando salario mínimo de referencia…"
+                    android:textSize="13sp"
+                    android:paddingTop="7dp"
+                    android:paddingBottom="1dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:textColor="#2E7D32" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="4dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Días de aguinaldo"
+                        android:textSize="16sp"
+                        android:textColor="#1B5E20" />
+
+                    <ImageButton
+                        android:id="@+id/btnAyudaDiasAguinaldo"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Ayuda días de aguinaldo"
+                        android:src="@android:drawable/ic_menu_help"
+                        app:tint="#1B5E20"
+                        android:padding="7dp" />
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/etDiasAguinaldo"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:inputType="number"
+                    android:imeOptions="actionDone"
+                    android:hint="Por defecto 15"
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp" />
+
+                <!-- Atajo táctil al mínimo legal, sin impedir editar el número de días -->
+                <TextView
+                    android:id="@+id/tvSugerenciaDiasAguinaldo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:gravity="center_vertical"
+                    android:text="Mínimo de ley: 15 días · Toca para usarlo"
+                    android:textSize="13sp"
+                    android:textColor="#2E7D32"
+                    android:paddingTop="7dp"
+                    android:paddingBottom="7dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:contentDescription="Usar el mínimo de ley de 15 días de aguinaldo" />
+
+                <Button
+                    android:id="@+id/btnCalcular"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="Calcular Aguinaldo"
+                    android:textAllCaps="false"
+                    android:textSize="18sp"
+                    android:backgroundTint="#2E7D32"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginTop="24dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/resultadosContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tvResultadoTitulo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Resultados"
+                    android:textSize="20sp"
+                    android:textColor="#1B5E20"
+                    android:textStyle="bold"
+                    android:paddingTop="24dp" />
+
+                <TextView
+                    android:id="@+id/tvResultados"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="16sp"
+                    android:textColor="#000000"
+                    android:paddingTop="16dp" />
+            </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
 
-    <!-- Banner AdMob fijo abajo -->
     <com.google.android.gms.ads.AdView
         android:id="@+id/adView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/banner_ad_unit_id"
+        app:adSize="BANNER"
+        app:adUnitId="@string/banner_ad_unit_id"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+<com.google.android.material.navigation.NavigationView
+    android:id="@+id/navigationView"
+    android:layout_width="300dp"
+    android:layout_height="match_parent"
+    android:layout_gravity="start"
+    android:fitsSystemWindows="true"
+    android:background="#FFFFFF"
+    app:headerLayout="@layout/navigation_header"
+    app:itemIconTint="#2E7D32"
+    app:itemTextColor="#244631"
+    app:menu="@menu/navigation_menu" />
+</androidx.drawerlayout.widget.DrawerLayout>

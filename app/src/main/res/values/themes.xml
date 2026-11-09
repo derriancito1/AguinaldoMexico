@@ -2,10 +2,9 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.AguinaldoMéxico" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-        <!-- Barra de estado negra -->
-        <item name="android:statusBarColor">#000000</item>
-        <item name="android:windowLightStatusBar">false</item>
+        <!-- Barra de estado clara con iconos oscuros -->
+        <item name="android:statusBarColor">#F0F8FF</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="Theme.AguinaldoMéxico" parent="Base.Theme.AguinaldoMéxico" />

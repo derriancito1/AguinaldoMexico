@@ -1,15 +1,35 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+# Android / Gradle
+.gradle/
+**/build/
+**/.cxx/
+.externalNativeBuild/
 local.properties
+*.iml
+captures/
+
+# Android Studio: user-specific configuration
+.idea/
+*.log
+
+# Sistema operativo / editor
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Firma y secretos privados (NO subir al repositorio)
+*.jks
+*.keystore
+*.p12
+*.pfx
+key.properties
+secrets.properties
+.env
+.env.*
+!.env.example
+
+# Archivos compilados o comprimidos
+*.apk
+*.aab
+*.apks
+*.zip

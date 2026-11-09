@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/grupo_calculadora">
+        <item android:id="@+id/nav_calculadora" android:title="Calculadora" android:icon="@drawable/ic_nav_calculator" />
+    </group>
+    <group android:id="@+id/grupo_informacion">
+        <item android:id="@+id/nav_guia" android:title="Guía del aguinaldo" android:icon="@drawable/ic_nav_book" />
+        <item android:id="@+id/nav_como_calcular" android:title="Cómo se calcula" />
+        <item android:id="@+id/nav_derechos" android:title="Derechos laborales" />
+        <item android:id="@+id/nav_isr" android:title="ISR y UMA" />
+        <item android:id="@+id/nav_valores" android:title="Valores fiscales por año" />
+        <item android:id="@+id/nav_fuentes" android:title="Fuentes oficiales" />
+    </group>
+    <group android:id="@+id/grupo_calificacion">
+        <item android:id="@+id/nav_calificar" android:title="Calificar aplicación" android:icon="@drawable/ic_nav_star" />
+    </group>
+</menu>
